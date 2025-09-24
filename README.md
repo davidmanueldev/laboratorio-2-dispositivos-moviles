@@ -2,6 +2,10 @@
 
 Una aplicación simple que muestra diferentes tipos de diseños e interfaces en Flutter. Esto fue un proyecto para practicar y mejorar la UI/UX de aplicaciones móviles.
 
+## Enlace al Repositorio
+
+[Click aqui para el repositorio en GitHub](https://github.com/davidmanueldev/laboratorio-2-dispositivos-moviles)
+
 ## Qué incluye
 
 La app tiene varias pantallas con diferentes estilos:
