@@ -2,7 +2,11 @@
 
 Una aplicación simple que muestra diferentes tipos de diseños e interfaces en Flutter. Esto fue un proyecto para practicar y mejorar la UI/UX de aplicaciones móviles.
 
+## Estudiante: David Manuel Mamani Huanca
+
 ## Enlace al Repositorio
+
+NOTA: Hice la respectiva presentación en el laboratorio en clase, y me gané mis puntos por entregar primero.
 
 [Click aqui para el repositorio en GitHub](https://github.com/davidmanueldev/laboratorio-2-dispositivos-moviles)
 
