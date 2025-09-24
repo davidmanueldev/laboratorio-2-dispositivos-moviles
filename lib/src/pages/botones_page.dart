@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
-
 import 'dart:math';
 import 'dart:ui';
 
+class BotonesPage extends StatefulWidget {
+  @override
+  _BotonesPageState createState() => _BotonesPageState();
+}
 
-class BotonesPage extends StatelessWidget {
+class _BotonesPageState extends State<BotonesPage> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -12,22 +37,94 @@ class BotonesPage extends StatelessWidget {
       body: Stack(
         children: <Widget>[
           _fondoApp(),
-
-          SingleChildScrollView(
+          SafeArea(
             child: Column(
-              children: <Widget>[
-                _titulos(),
-                _botonesRedondeados()
+              children: [
+                _appBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Column(
+                        children: <Widget>[
+                          _titulos(),
+                          _botonesRedondeados(),
+                          SizedBox(height: 100),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-          )
-
+          ),
         ],
       ),
-      bottomNavigationBar: _bottomNavigationBar(context)
+      bottomNavigationBar: _bottomNavigationBar(context),
     );
   }
 
+
+  Widget _appBar(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.3)),
+              ),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: () => _showInfo(context),
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.3)),
+              ),
+              child: Icon(
+                Icons.info_outline,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showInfo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('Información'),
+        content: Text('Esta página muestra botones con efecto glassmorphism y animaciones interactivas.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Entendido'),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _fondoApp(){
 
@@ -77,114 +174,314 @@ class BotonesPage extends StatelessWidget {
   }
 
   Widget _titulos() {
-
-    return SafeArea(
-      child: Container(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Classify transaction', style: TextStyle( color: Colors.white, fontSize: 30.0, fontWeight: FontWeight.bold )),
-            SizedBox( height: 10.0 ),
-            Text('Classify this transaction into a particular category', style: TextStyle( color: Colors.white, fontSize: 18.0 )),
-          ],
-        ),
-      ),
-    );
-
-  }
-
-  Widget _bottomNavigationBar(BuildContext context) {
-
-    return Theme(
-      data: Theme.of(context).copyWith(
-        canvasColor: Color.fromRGBO(55, 57, 84, 1.0),
-        primaryColor: Colors.pinkAccent,
-        textTheme: Theme.of(context).textTheme
-          .copyWith( bodySmall: TextStyle( color: Color.fromRGBO(116, 117, 152, 1.0) ) )
-      ),
-      child: BottomNavigationBar(
-        
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon( Icons.calendar_today, size: 30.0 ),
-            label: ''
+    return Container(
+      padding: EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Categorías Creativas',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32.0,
+              fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  blurRadius: 10.0,
+                  color: Colors.black.withOpacity(0.3),
+                  offset: Offset(2.0, 2.0),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon( Icons.bubble_chart, size: 30.0 ),
-            label: ''
-          ),
-          BottomNavigationBarItem(
-            icon: Icon( Icons.supervised_user_circle, size: 30.0 ),
-            label: ''
+          SizedBox(height: 12.0),
+          Text(
+            'Aca puse diferentes categorías con efectos visuales pa que se vea bonito',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 16.0,
+              height: 1.4,
+            ),
           ),
         ],
       ),
     );
+  }
 
+  Widget _bottomNavigationBar(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(55, 57, 84, 0.95),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            _onBottomNavTap(index, context);
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          selectedItemColor: Colors.pinkAccent,
+          unselectedItemColor: Color.fromRGBO(116, 117, 152, 1.0),
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _selectedIndex == 0 ? Colors.pinkAccent.withOpacity(0.2) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.home, size: 26.0),
+              ),
+              label: 'Inicio',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _selectedIndex == 1 ? Colors.pinkAccent.withOpacity(0.2) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.apps, size: 26.0),
+              ),
+              label: 'Categorías',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _selectedIndex == 2 ? Colors.pinkAccent.withOpacity(0.2) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.person, size: 26.0),
+              ),
+              label: 'Perfil',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onBottomNavTap(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false);
+        break;
+      case 1:
+        // Ya estamos en categorías
+        break;
+      case 2:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Próximamente: Me dio flojera hacer perfil xd'),
+            backgroundColor: Colors.pinkAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+        break;
+    }
   }
 
 
   Widget _botonesRedondeados() {
+    final categorias = [
+      {'color': Colors.blue, 'icon': Icons.dashboard, 'text': 'General'},
+      {'color': Colors.purpleAccent, 'icon': Icons.directions_bus, 'text': 'Transporte'},
+      {'color': Colors.pinkAccent, 'icon': Icons.shopping_bag, 'text': 'Compras'},
+      {'color': Colors.orange, 'icon': Icons.insert_drive_file, 'text': 'Archivos'},
+      {'color': Colors.blueAccent, 'icon': Icons.movie_filter, 'text': 'Entretenimiento'},
+      {'color': Colors.green, 'icon': Icons.restaurant, 'text': 'Comida'},
+      {'color': Colors.red, 'icon': Icons.photo_library, 'text': 'Fotos'},
+      {'color': Colors.teal, 'icon': Icons.fitness_center, 'text': 'Fitness'},
+    ];
 
-    return Table(
-      children: [
-        TableRow(
-          children: [
-            _crearBotonRedondeado( Colors.blue, Icons.border_all, 'General' ),
-            _crearBotonRedondeado( Colors.purpleAccent, Icons.directions_bus, 'Bus' ),
-          ]
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.0,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
         ),
-        TableRow(
-          children: [
-            _crearBotonRedondeado( Colors.pinkAccent, Icons.shop, 'Buy' ),
-            _crearBotonRedondeado( Colors.orange, Icons.insert_drive_file, 'File' ),
-          ]
-        ),
-        TableRow(
-          children: [
-            _crearBotonRedondeado( Colors.blueAccent, Icons.movie_filter, 'Entertaiment' ),
-            _crearBotonRedondeado( Colors.green, Icons.cloud, 'Grocery' ),
-          ]
-        ),
-        TableRow(
-          children: [
-            _crearBotonRedondeado( Colors.red, Icons.collections, 'Photos' ),
-            _crearBotonRedondeado( Colors.teal, Icons.help_outline, 'General' ),
-          ]
-        )
-      ],
+        itemCount: categorias.length,
+        itemBuilder: (context, index) {
+          final categoria = categorias[index];
+          return _crearBotonRedondeado(
+            categoria['color'] as Color,
+            categoria['icon'] as IconData,
+            categoria['text'] as String,
+            index,
+          );
+        },
+      ),
     );
-
   }
 
-  Widget _crearBotonRedondeado( Color color, IconData icono, String texto ) {
- 
- 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur( sigmaX: 10.0, sigmaY: 10.0 ),
-        child: Container(
-          height: 180.0,
-          margin: EdgeInsets.all(15.0),
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(62, 66, 107, 0.7),
-            borderRadius: BorderRadius.circular(20.0)
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              SizedBox( height: 5.0 ),
-              CircleAvatar(
-                backgroundColor: color,
-                radius: 35.0,
-                child: Icon( icono, color: Colors.white, size: 30.0 ),
+  Widget _crearBotonRedondeado(Color color, IconData icono, String texto, int index) {
+    return GestureDetector(
+      onTap: () => _onCategoryTap(texto),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.0),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(62, 66, 107, 0.8),
+                borderRadius: BorderRadius.circular(24.0),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: Offset(0, 8),
+                  ),
+                ],
               ),
-              Text( texto , style: TextStyle( color: color )),
-              SizedBox( height: 5.0 )
-            ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: color.withOpacity(0.5),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      icono,
+                      color: color,
+                      size: 32.0,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    texto,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    width: 40,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
- 
+        ),
+      ),
+    );
+  }
+
+  void _onCategoryTap(String categoria) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: 300,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 50,
+              height: 5,
+              margin: EdgeInsets.only(top: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            SizedBox(height: 24),
+            Text(
+              'Categoría: $categoria',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Has seleccionado la categoría $categoria.\nPróximamente habrá más funcionalidades (Si me da la gana claramente)',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.all(24),
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6C40E6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  child: Text(
+                    'Entendido',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
