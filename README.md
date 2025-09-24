@@ -1,4 +1,4 @@
-# App de Diseños Flutter
+# Laboratorio 2 | Programación de Dispositivos Móviles (App de Diseños Flutter)
 
 Una aplicación simple que muestra diferentes tipos de diseños e interfaces en Flutter. Esto fue un proyecto para practicar y mejorar la UI/UX de aplicaciones móviles.
 
